@@ -1,7 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import alertContext from '../context/alert/alertContext';
 
 const Signup = () => {
+
+    const context = useContext(alertContext);
+    const {showAlert} = context;
 
     const [creds, setCreds] = useState({name:"", email: "", password:"", cpassword:""})
     let navigate = useNavigate();
@@ -28,9 +32,10 @@ const Signup = () => {
             // save the authtoken & redirect
             localStorage.setItem('token', json.authtoken);
             navigate("/")
+            showAlert("Account created successfully", "success");
         }
         else{
-            alert("some error occurred");
+            showAlert("Invalid Credentials", "danger");
         }
     }
 
