@@ -15,10 +15,11 @@ router.post('/createuser', [
   body('email', 'Enter a valid email').isEmail(),
   body('password', 'Password must be atleast 5 characters').isLength({ min: 5 }),
 ], async (req, res) => {
+  let success = false
   // if there are errors, return bad request
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ success, errors: errors.array() });
   }
 
   // check whether user exist already or not
@@ -26,7 +27,7 @@ router.post('/createuser', [
   try {
     let user = await User.findOne({ email: req.body.email })
     if (user) {
-      return res.status(400).json({ "error": "user already exist" })
+      return res.status(400).json({ success, error: "user already exist" })
     }
 
     const salt = await bcrypt.genSaltSync(10);
@@ -48,8 +49,8 @@ router.post('/createuser', [
 
     const authtoken = jwt.sign(data, JWT_SECRET);
 
-
-    res.json({ authtoken })
+    success = true
+    res.json({ success, authtoken })
 
   } catch (error) {
     console.log(error.message)
@@ -86,7 +87,8 @@ try {
 
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
-    return res.status(400).json({ error: "please use correct credentials" });
+    success = false
+    return res.status(400).json({ success, error: "please use correct credentials" });
   }
 
   const data = {
@@ -96,9 +98,9 @@ try {
   }
 
   const authtoken = jwt.sign(data, JWT_SECRET);
-
-
-  res.json({ authtoken })
+  
+  success = true
+  res.json({ success, authtoken })
 
 } catch (error) {
   console.log(error.message)

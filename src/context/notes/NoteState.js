@@ -46,15 +46,7 @@ const NoteState = (props) => {
          
 
         console.log("adding a new note")
-        const note = {
-            "_id": "64c01869a245342d2ea32e",
-            "user": "64bcec8c07d166ec65b8f55a",
-            "title": title,
-            "description": description,
-            "tag": tag,
-            "date": "2023-07-25T18:46:01.189Z",
-            "__v": 0
-        }
+        const note = await response.json()
         setNotes(notes.concat(note))
     }
 
@@ -87,7 +79,7 @@ const NoteState = (props) => {
         // API call
 
         const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
-            method: "POST", 
+            method: "PUT", 
            
             headers: {
               "Content-Type": "application/json",
@@ -97,6 +89,7 @@ const NoteState = (props) => {
             body: JSON.stringify({title, description, tag}), 
           });
           const json = response.json();
+          getNotes();
 
         //Logic to edit in client
         for (let i = 0; i < notes.length; i++) {

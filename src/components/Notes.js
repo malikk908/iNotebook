@@ -7,7 +7,7 @@ import Editnote from './Editnote';
 const Notes = () => {
 
   const context = useContext(noteContext);
-  const { notes, getNotes } = context;
+  const { notes, getNotes, editNote } = context;
 
   useEffect(() => {
     getNotes()
@@ -20,7 +20,8 @@ const Notes = () => {
   }
 
   const handleClick = (e) => {
-    e.preventDefault()
+    console.log("Updating the note...", note)
+    editNote(note.id, note.etitle, note.edescription, note.etag)
 
   }
 
@@ -62,7 +63,7 @@ const Notes = () => {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Update Note</button>
+                <button disabled={note.etitle.length<5 || note.edescription.length<5 } onClick={handleClick} type="button" className="btn btn-primary" data-bs-dismiss="modal">Update Note</button>
               </div>
             </div>
           </div>
@@ -71,6 +72,7 @@ const Notes = () => {
 
         <div className="row my-2">
           <h2>Your Notes</h2>
+          <div className="container">{notes.length === 0 && "No notes to display"}</div>
           {notes.map((x) => {
             return <Noteitem key={x._id} updateNote={updateNote} note={x} />;
           })}
