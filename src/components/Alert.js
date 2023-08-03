@@ -5,6 +5,9 @@ export default function Alert() {
 
     const capitalize = (word)=>{
         // const lower = word.toLowerCase();
+        if (word==="danger"){
+            word = "error"
+        }
         return word.charAt(0).toUpperCase() + word.slice(1)
     }
 

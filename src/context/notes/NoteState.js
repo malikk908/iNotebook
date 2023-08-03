@@ -1,7 +1,12 @@
 import NoteContext from "./noteContext";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import alertContext from '../alert/alertContext';
+
 
 const NoteState = (props) => {
+
+  const context = useContext(alertContext);
+  const {showAlert} = context;
 
     const host = "http://localhost:5000"
 
@@ -18,7 +23,7 @@ const NoteState = (props) => {
            
             headers: {
               "Content-Type": "application/json",
-              "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRiY2VjOGMwN2QxNjZlYzY1YjhmNTVhIn0sImlhdCI6MTY5MDE3Nzk5NH0.QEVg1glrPm7tHveEANmokO1Fphp72NXFPuFX2qAc3Zo"
+              "auth-token": localStorage.getItem('token')
             },
             
             
@@ -38,7 +43,7 @@ const NoteState = (props) => {
            
             headers: {
               "Content-Type": "application/json",
-              "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRiY2VjOGMwN2QxNjZlYzY1YjhmNTVhIn0sImlhdCI6MTY5MDE3Nzk5NH0.QEVg1glrPm7tHveEANmokO1Fphp72NXFPuFX2qAc3Zo"
+              "auth-token": localStorage.getItem('token')
             },
             
             body: JSON.stringify({title, description, tag}), 
@@ -46,8 +51,12 @@ const NoteState = (props) => {
          
 
         console.log("adding a new note")
-        const note = await response.json()
-        setNotes(notes.concat(note))
+        const json = await response.json()
+        setNotes(notes.concat(json.savedNote))
+        
+        
+        showAlert(`${json.message}`,'success')
+        
     }
 
     // Delete a Note
@@ -59,7 +68,7 @@ const NoteState = (props) => {
            
             headers: {
               "Content-Type": "application/json",
-              "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRiY2VjOGMwN2QxNjZlYzY1YjhmNTVhIn0sImlhdCI6MTY5MDE3Nzk5NH0.QEVg1glrPm7tHveEANmokO1Fphp72NXFPuFX2qAc3Zo"
+              "auth-token": localStorage.getItem('token')
             },
             
             
@@ -70,6 +79,7 @@ const NoteState = (props) => {
 
         console.log("Deleting the note with id:" + id)
         setNotes(notes.filter(x => (x._id !== id)))
+        showAlert(`${json.message}`,'success')
     }
 
     // Edit a Note
@@ -83,13 +93,15 @@ const NoteState = (props) => {
            
             headers: {
               "Content-Type": "application/json",
-              "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRiY2VjOGMwN2QxNjZlYzY1YjhmNTVhIn0sImlhdCI6MTY5MDE3Nzk5NH0.QEVg1glrPm7tHveEANmokO1Fphp72NXFPuFX2qAc3Zo"
+              "auth-token": localStorage.getItem('token')
             },
             
             body: JSON.stringify({title, description, tag}), 
           });
-          const json = response.json();
+          const json = await response.json();
+          showAlert(`${json.message}`,'success')
           getNotes();
+          
 
         //Logic to edit in client
         for (let i = 0; i < notes.length; i++) {
